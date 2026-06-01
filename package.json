@@ -1,0 +1,40 @@
+{
+  "name": "shetsarthi-agro",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SHETSARTHI AGRO AGENCIES — immersive 3D website for the Manori, Maharashtra agricultural service center",
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^15.1.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "three": "^0.171.0",
+    "@react-three/fiber": "^9.0.0-rc.5",
+    "@react-three/drei": "^9.121.4",
+    "@react-three/postprocessing": "^3.0.4",
+    "gsap": "^3.12.5",
+    "lenis": "^1.1.20",
+    "framer-motion": "^11.18.2",
+    "lottie-react": "^2.4.0",
+    "lucide-react": "^0.474.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.7",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "@types/three": "^0.171.0",
+    "typescript": "^5.7.3",
+    "tailwindcss": "^3.4.17",
+    "postcss": "^8.5.1",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.18.0",
+    "eslint-config-next": "^15.1.6"
+  }
+}
