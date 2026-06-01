@@ -13,10 +13,6 @@ import {
 } from "@react-three/drei";
 import * as THREE from "three";
 
-/**
- * Hero 3D scene — a stylized Maharashtra sunrise farm scene.
- * Procedurally generated (no external models) so it's lightweight and tweakable.
- */
 
 function GroundPlane() {
   // Two-tone soil with subtle bumps using vertex displacement is heavy; use a flat plane with gradient material
@@ -58,7 +54,7 @@ function GroundPlane() {
   );
 }
 
-/** A single stalk of crop — wheat-like — that sways. */
+
 function CropStalk({
   position,
   scale = 1,
