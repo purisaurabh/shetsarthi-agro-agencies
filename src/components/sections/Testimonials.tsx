@@ -5,7 +5,7 @@ import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Quote } from "lucide-react";
-import { TESTIMONIALS } from "@/lib/constants";
+import { useT } from "@/lib/i18n/LanguageContext";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -13,6 +13,8 @@ if (typeof window !== "undefined") {
 
 export default function Testimonials() {
   const root = useRef<HTMLElement>(null);
+  const t = useT();
+  const TESTIMONIALS = t.testimonials.items;
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -63,11 +65,11 @@ export default function Testimonials() {
       <div className="relative mx-auto max-w-[1400px] px-6 md:px-10">
         <div className="mx-auto mb-12 sm:mb-20 max-w-3xl text-center">
           <span className="inline-block rounded-full border border-black/10 bg-white/60 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-muted backdrop-blur">
-            Voices from the field
+            {t.testimonials.eyebrow}
           </span>
           <h2 className="mt-4 sm:mt-6 font-display text-[clamp(2rem,6.5vw,6rem)] leading-[0.95] text-balance">
-            Maharashtra&apos;s farmers <br className="hidden sm:block" />
-            <span className="italic gradient-text">in their own words.</span>
+            {t.testimonials.title1} <br className="hidden sm:block" />
+            <span className="italic gradient-text">{t.testimonials.titleAccent}</span>
           </h2>
         </div>
 

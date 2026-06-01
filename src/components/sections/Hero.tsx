@@ -7,6 +7,7 @@ import { ArrowRight, ArrowDown } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SITE } from "@/lib/constants";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const HeroScene = dynamic(() => import("@/components/three/HeroScene"), {
   ssr: false,
@@ -21,6 +22,7 @@ export default function Hero() {
   const root = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const overlay = useRef<HTMLDivElement>(null);
+  const { t, locale } = useLanguage();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -65,7 +67,9 @@ export default function Hero() {
     }, root);
 
     return () => ctx.revert();
-  }, []);
+    // re-run when the language changes so the freshly-mounted title
+    // (which gets keyed by locale below) plays its reveal again.
+  }, [locale]);
 
   return (
     <section
@@ -102,20 +106,21 @@ export default function Hero() {
             <span className="relative inline-flex h-2 w-2 rounded-full bg-fresh" />
           </span>
           <span className="text-xs uppercase tracking-[0.2em] text-white/90">
-            {SITE.location}
+            {t.site.location}
           </span>
         </motion.div>
 
         <h1
+          key={locale}
           ref={headlineRef}
           className="font-display text-[clamp(2.25rem,11vw,9rem)] leading-[0.95] text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.45)] sm:text-balance max-w-[16ch] px-2"
         >
           <span className="hero-line block overflow-hidden">
-            <span className="inline-block translate-y-[115%]">Modern Agriculture</span>
+            <span className="inline-block translate-y-[115%]">{t.hero.line1}</span>
           </span>
           <span className="hero-line block overflow-hidden">
             <span className="inline-block translate-y-[115%] italic">
-              Begins Here
+              {t.hero.line2}
             </span>
           </span>
         </h1>
@@ -126,8 +131,7 @@ export default function Hero() {
           transition={{ duration: 1, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
           className="mt-5 sm:mt-8 max-w-2xl text-pretty text-sm sm:text-base md:text-lg text-white/95 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
         >
-          Helping Maharashtra farmers grow better crops through knowledge,
-          quality products and expert guidance.
+          {t.hero.description}
         </motion.p>
 
         <motion.div
@@ -140,14 +144,14 @@ export default function Hero() {
             href={`tel:${SITE.phoneRaw}`}
             className="group inline-flex items-center justify-center gap-3 rounded-full bg-white px-7 py-3.5 text-sm font-medium text-ink transition-all hover:bg-fresh hover:text-white hover:scale-[1.03]"
           >
-            <span>Talk to Expert</span>
+            <span>{t.hero.ctaPrimary}</span>
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </a>
           <a
             href="#story"
             className="group inline-flex items-center justify-center gap-3 rounded-full border border-white/30 bg-white/10 px-7 py-3.5 text-sm font-medium text-white backdrop-blur transition-all hover:bg-white/20"
           >
-            <span>Explore Journey</span>
+            <span>{t.hero.ctaSecondary}</span>
             <ArrowDown className="h-4 w-4 transition-transform group-hover:translate-y-1" />
           </a>
         </motion.div>
@@ -160,7 +164,7 @@ export default function Hero() {
         transition={{ delay: 2.2, duration: 1 }}
         className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-2 text-white/80"
       >
-        <span className="text-[10px] uppercase tracking-[0.3em]">Scroll</span>
+        <span className="text-[10px] uppercase tracking-[0.3em]">{t.common.scroll}</span>
         <div className="relative h-10 w-[1px] overflow-hidden bg-white/30">
           <motion.div
             className="absolute top-0 left-0 h-1/2 w-full bg-white"

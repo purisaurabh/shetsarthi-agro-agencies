@@ -7,6 +7,7 @@ import { Phone, MessageCircle, ArrowUpRight } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SITE } from "@/lib/constants";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -14,6 +15,7 @@ if (typeof window !== "undefined") {
 
 export default function FinalCTA() {
   const root = useRef<HTMLElement>(null);
+  const { t, locale } = useLanguage();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -47,7 +49,7 @@ export default function FinalCTA() {
       }
     }, root);
     return () => ctx.revert();
-  }, []);
+  }, [locale]);
 
   return (
     <section
@@ -90,16 +92,19 @@ export default function FinalCTA() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-fresh opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-fresh" />
           </span>
-          <span className="text-xs uppercase tracking-[0.25em]">Ready when you are</span>
+          <span className="text-xs uppercase tracking-[0.25em]">{t.finalCta.badge}</span>
         </motion.span>
 
-        <h2 className="cta-line mt-6 sm:mt-8 font-display text-[clamp(2.5rem,11vw,11rem)] leading-[0.9] drop-shadow-[0_4px_30px_rgba(0,0,0,0.4)] text-balance">
+        <h2
+          key={locale}
+          className="cta-line mt-6 sm:mt-8 font-display text-[clamp(2.5rem,11vw,11rem)] leading-[0.9] drop-shadow-[0_4px_30px_rgba(0,0,0,0.4)] text-balance"
+        >
           <span className="block overflow-hidden">
-            <span className="inline-block translate-y-[115%]">Let&apos;s grow</span>
+            <span className="inline-block translate-y-[115%]">{t.finalCta.line1}</span>
           </span>
           <span className="block overflow-hidden">
             <span className="inline-block translate-y-[115%] italic text-fresh">
-              together.
+              {t.finalCta.line2}
             </span>
           </span>
         </h2>
@@ -111,8 +116,7 @@ export default function FinalCTA() {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="mt-6 sm:mt-8 max-w-xl text-pretty text-base sm:text-lg text-white/90"
         >
-          A 20-minute call with our agronomist could change this season for you.
-          No commitment. Just farmer-to-farmer talk.
+          {t.finalCta.lede}
         </motion.p>
 
         <motion.div
@@ -129,18 +133,18 @@ export default function FinalCTA() {
             <span className="absolute inset-0 -z-0 origin-left scale-x-0 bg-fresh transition-transform duration-700 group-hover:scale-x-100" />
             <Phone className="relative z-10 h-4 w-4 transition-colors group-hover:text-white" />
             <span className="relative z-10 font-medium transition-colors group-hover:text-white">
-              Call {SITE.phone}
+              {t.common.call} {SITE.phone}
             </span>
             <ArrowUpRight className="relative z-10 h-4 w-4 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-white" />
           </a>
           <a
-            href={`https://wa.me/${SITE.whatsapp.replace(/[^\d]/g, "")}?text=${encodeURIComponent(SITE.whatsappMsg)}`}
+            href={`https://wa.me/${SITE.whatsapp.replace(/[^\d]/g, "")}?text=${encodeURIComponent(t.site.whatsappMsg)}`}
             target="_blank"
             rel="noreferrer"
             className="group inline-flex items-center justify-center gap-3 rounded-full bg-[#25D366] px-6 sm:px-8 py-4 text-white transition-all hover:scale-[1.03] hover:bg-[#1eb558]"
           >
             <MessageCircle className="h-4 w-4" />
-            <span className="font-medium">WhatsApp Us</span>
+            <span className="font-medium">{t.common.whatsappUs}</span>
             <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </a>
         </motion.div>

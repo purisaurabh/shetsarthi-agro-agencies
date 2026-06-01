@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SERVICES } from "@/lib/constants";
+import { useT } from "@/lib/i18n/LanguageContext";
 import { cn } from "@/lib/utils";
 
 if (typeof window !== "undefined") {
@@ -14,6 +14,8 @@ if (typeof window !== "undefined") {
 export default function ServicesEcosystem() {
   const root = useRef<HTMLElement>(null);
   const [active, setActive] = useState<number | null>(null);
+  const t = useT();
+  const SERVICES = t.services.items;
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -95,12 +97,11 @@ export default function ServicesEcosystem() {
           </div>
           <div className="lg:col-span-10">
             <h2 className="font-display text-[clamp(2.5rem,7vw,7rem)] leading-[0.95] text-balance">
-              Every farm needs <br />
-              an <span className="italic text-fresh">ecosystem.</span>
+              {t.services.title1} <br />
+              {t.services.title2}{" "}
+              <span className="italic text-fresh">{t.services.titleAccent}</span>
             </h2>
-            <p className="mt-6 max-w-xl text-lg text-white/70">
-              Seven services orbit a single mission — your harvest. Hover any node to explore.
-            </p>
+            <p className="mt-6 max-w-xl text-lg text-white/70">{t.services.lede}</p>
           </div>
         </div>
 
@@ -137,9 +138,9 @@ export default function ServicesEcosystem() {
             <div className="eco-center relative grid h-44 w-44 place-items-center rounded-full bg-gradient-to-br from-primary via-fresh to-harvest p-[2px] animate-pulse-glow">
               <div className="grid h-full w-full place-items-center rounded-full bg-ink">
                 <div className="text-center">
-                  <p className="font-display text-2xl leading-tight">Green</p>
+                  <p className="font-display text-2xl leading-tight">{t.services.centerLine1}</p>
                   <p className="font-display text-2xl italic leading-tight text-fresh">
-                    Harvest
+                    {t.services.centerLine2}
                   </p>
                 </div>
               </div>

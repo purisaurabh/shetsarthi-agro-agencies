@@ -3,9 +3,11 @@
 import { useState, FormEvent } from "react";
 import { motion } from "framer-motion";
 import { Send, CheckCircle } from "lucide-react";
+import { useT } from "@/lib/i18n/LanguageContext";
 
 export default function ContactForm() {
   const [sent, setSent] = useState(false);
+  const t = useT();
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -20,10 +22,8 @@ export default function ContactForm() {
         className="glass flex flex-col items-center justify-center rounded-3xl p-12 text-center"
       >
         <CheckCircle className="h-12 w-12 text-primary" />
-        <h3 className="mt-4 font-display text-3xl">Message received!</h3>
-        <p className="mt-2 text-muted">
-          We&apos;ll call you back within 24 hours. For urgent queries, WhatsApp us directly.
-        </p>
+        <h3 className="mt-4 font-display text-3xl">{t.contactForm.successHeading}</h3>
+        <p className="mt-2 text-muted">{t.contactForm.successBody}</p>
       </motion.div>
     );
   }
@@ -33,45 +33,45 @@ export default function ContactForm() {
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label className="mb-2 block text-xs uppercase tracking-widest text-muted">
-            Your Name
+            {t.contactForm.nameLabel}
           </label>
           <input
             required
             type="text"
-            placeholder="Sandeep Patil"
+            placeholder={t.contactForm.namePlaceholder}
             className="w-full rounded-xl border border-black/10 bg-white/60 px-4 py-3 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </div>
         <div>
           <label className="mb-2 block text-xs uppercase tracking-widest text-muted">
-            Phone Number
+            {t.contactForm.phoneLabel}
           </label>
           <input
             required
             type="tel"
-            placeholder="+91 93594 99856"
+            placeholder={t.contactForm.phonePlaceholder}
             className="w-full rounded-xl border border-black/10 bg-white/60 px-4 py-3 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </div>
       </div>
       <div>
         <label className="mb-2 block text-xs uppercase tracking-widest text-muted">
-          District / Village
+          {t.contactForm.locationLabel}
         </label>
         <input
           type="text"
-          placeholder="Manori, Maharashtra"
+          placeholder={t.contactForm.locationPlaceholder}
           className="w-full rounded-xl border border-black/10 bg-white/60 px-4 py-3 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
         />
       </div>
       <div>
         <label className="mb-2 block text-xs uppercase tracking-widest text-muted">
-          How can we help?
+          {t.contactForm.messageLabel}
         </label>
         <textarea
           required
           rows={4}
-          placeholder="Tell us about your crop, problem or enquiry..."
+          placeholder={t.contactForm.messagePlaceholder}
           className="w-full resize-none rounded-xl border border-black/10 bg-white/60 px-4 py-3 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
         />
       </div>
@@ -79,12 +79,10 @@ export default function ContactForm() {
         type="submit"
         className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-ink py-4 text-sm font-medium text-white transition-all hover:bg-primary sm:w-auto sm:px-10"
       >
-        <span>Send Message</span>
+        <span>{t.contactForm.submit}</span>
         <Send className="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </button>
-      <p className="text-xs text-muted text-center">
-        This is a static demo form. For real enquiries, call or WhatsApp us directly.
-      </p>
+      <p className="text-xs text-muted text-center">{t.contactForm.disclaimer}</p>
     </form>
   );
 }

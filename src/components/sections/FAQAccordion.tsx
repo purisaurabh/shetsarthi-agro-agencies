@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
-import { FAQS } from "@/lib/constants";
+import { useT } from "@/lib/i18n/LanguageContext";
 import { cn } from "@/lib/utils";
 
 export default function FAQAccordion() {
   const [open, setOpen] = useState<number | null>(0);
+  const t = useT();
+  const FAQS = t.faqs.items;
 
   return (
     <div className="mx-auto max-w-3xl space-y-3">

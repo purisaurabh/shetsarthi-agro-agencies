@@ -3,12 +3,22 @@
 import { useRef, useEffect } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowUpRight } from "lucide-react";
-import { PRODUCTS } from "@/lib/constants";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export default function ProductsScroll() {
+  const section = useRef<HTMLDivElement>(null);
+  const pin = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
+  const { t, locale } = useLanguage();
+  const PRODUCTS = t.products.items;
 
+  // 3D tilt on hover (desktop pointers only)
   useEffect(() => {
     const trackEl = track.current;
     if (!trackEl || window.matchMedia("(hover: none)").matches) return;
@@ -58,36 +68,79 @@ export default function ProductsScroll() {
     };
   }, []);
 
+  // Pinned horizontal scroll (tablet + desktop). Mobile falls back to native swipe.
+  useEffect(() => {
+    const sectionEl = section.current;
+    const pinEl = pin.current;
+    const trackEl = track.current;
+    if (!sectionEl || !pinEl || !trackEl) return;
+
+    const mm = gsap.matchMedia();
+
+    mm.add("(min-width: 768px)", () => {
+      const getDistance = () =>
+        Math.max(0, trackEl.scrollWidth - window.innerWidth);
+
+      const tween = gsap.to(trackEl, {
+        x: () => -getDistance(),
+        ease: "none",
+        scrollTrigger: {
+          trigger: pinEl,
+          start: "top top",
+          end: () => `+=${getDistance()}`,
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true,
+          anticipatePin: 1,
+        },
+      });
+
+      return () => {
+        tween.scrollTrigger?.kill();
+        tween.kill();
+        gsap.set(trackEl, { clearProps: "transform" });
+      };
+    });
+
+    return () => mm.revert();
+    // Re-run when language changes — the card text width affects scrollWidth,
+    // so the pin distance has to be recomputed.
+  }, [locale]);
+
   return (
     <section
       id="products"
-      className="relative overflow-hidden bg-gradient-to-b from-bg to-[#F0F0EB] py-20 sm:py-24 lg:py-32"
+      ref={section}
+      className="relative overflow-hidden bg-gradient-to-b from-bg to-[#F0F0EB]"
     >
-      <div className="relative z-10 mx-auto max-w-[1400px] px-6 md:px-10">
-        <div className="flex flex-col gap-4 sm:gap-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <span className="inline-block rounded-full border border-black/10 bg-white/60 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-muted backdrop-blur">
-              Products
-            </span>
-            <h2 className="mt-3 sm:mt-4 font-display text-[clamp(2rem,5vw,5rem)] leading-[0.95] text-balance">
-              Curated for <br className="hidden sm:block" /> Maharashtra&apos;s soil.
-            </h2>
+      <div
+        ref={pin}
+        className="relative flex h-[100svh] min-h-[640px] flex-col justify-center gap-8 py-12 md:gap-12 md:py-16"
+      >
+        {/* Header — stays visible during the pinned horizontal scroll */}
+        <div className="relative z-10 mx-auto w-full max-w-[1400px] px-6 md:px-10">
+          <div className="flex flex-col gap-4 sm:gap-6 md:flex-row md:items-end md:justify-between">
+            <div>
+              <span className="inline-block rounded-full border border-black/10 bg-white/60 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-muted backdrop-blur">
+                {t.products.eyebrow}
+              </span>
+              <h2 className="mt-3 font-display text-[clamp(2rem,5vw,5rem)] leading-[0.95] text-balance sm:mt-4">
+                {t.products.title1} <br className="hidden sm:block" /> {t.products.title2}
+              </h2>
+            </div>
+            <p className="max-w-sm text-sm text-muted sm:text-base">{t.products.lede}</p>
           </div>
-          <p className="max-w-sm text-muted text-sm sm:text-base">
-            Swipe through products field-tested with farmers across Maharashtra.
-          </p>
         </div>
-      </div>
 
-      <div className="mt-10 sm:mt-12">
+        {/* Horizontal track. Native swipe on mobile, GSAP-driven on md+. */}
         <div
           ref={track}
-          className="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory px-6 md:px-10 pb-4 [-ms-overflow-style:none] [scrollbar-width:none]"
+          className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pl-6 pr-6 pb-4 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-6 md:overflow-visible md:snap-none md:pl-10 md:pr-[12vw] md:will-change-transform"
         >
           {PRODUCTS.map((p) => (
             <div
               key={p.id}
-              className="product-card group relative flex h-[460px] sm:h-[520px] lg:h-[560px] w-[78vw] sm:w-[360px] lg:w-[420px] flex-shrink-0 flex-col overflow-hidden rounded-3xl bg-white shadow-xl shadow-black/5 snap-center [transform-style:preserve-3d]"
+              className="product-card group relative flex h-[460px] w-[78vw] flex-shrink-0 snap-center flex-col overflow-hidden rounded-3xl bg-white shadow-xl shadow-black/5 [transform-style:preserve-3d] sm:h-[520px] sm:w-[360px] md:h-[min(520px,60svh)] lg:h-[min(560px,65svh)] lg:w-[420px]"
             >
               <div className="relative h-2/3 overflow-hidden">
                 <Image
@@ -128,18 +181,19 @@ export default function ProductsScroll() {
             </div>
           ))}
 
-          <div className="relative flex h-[460px] sm:h-[520px] lg:h-[560px] w-[78vw] sm:w-[360px] lg:w-[420px] flex-shrink-0 flex-col items-center justify-center overflow-hidden rounded-3xl bg-ink p-8 sm:p-10 text-white snap-center">
+          <div className="relative flex h-[460px] w-[78vw] flex-shrink-0 snap-center flex-col items-center justify-center overflow-hidden rounded-3xl bg-ink p-8 text-white sm:h-[520px] sm:w-[360px] sm:p-10 md:h-[min(520px,60svh)] lg:h-[min(560px,65svh)] lg:w-[420px]">
             <p className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-fresh">
-              More on the way
+              {t.products.moreOnTheWay}
             </p>
             <h3 className="mt-3 sm:mt-4 font-display text-3xl sm:text-4xl leading-tight text-balance text-center">
-              See the full <span className="italic text-fresh">catalog</span>
+              {t.products.ctaLine1}{" "}
+              <span className="italic text-fresh">{t.products.ctaLine2}</span>
             </h3>
             <a
               href="/products"
               className="mt-6 sm:mt-8 inline-flex items-center gap-3 rounded-full bg-white px-5 sm:px-6 py-2.5 sm:py-3 text-sm font-medium text-ink transition-colors hover:bg-fresh hover:text-white"
             >
-              Explore Products
+              {t.products.ctaButton}
               <ArrowUpRight className="h-4 w-4" />
             </a>
           </div>

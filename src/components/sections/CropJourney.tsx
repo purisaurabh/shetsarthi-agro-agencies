@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { CROP_JOURNEY } from "@/lib/constants";
+import { useT } from "@/lib/i18n/LanguageContext";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -11,6 +11,8 @@ if (typeof window !== "undefined") {
 
 export default function CropJourney() {
   const root = useRef<HTMLElement>(null);
+  const t = useT();
+  const CROP_JOURNEY = t.journey.items;
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -67,13 +69,13 @@ export default function CropJourney() {
         <div className="mb-16 sm:mb-24 grid gap-6 sm:gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-2">
             <span className="inline-block rounded-full border border-black/10 bg-white/60 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-muted backdrop-blur">
-              Crop Journey
+              {t.journey.eyebrow}
             </span>
           </div>
           <div className="lg:col-span-10">
             <h2 className="font-display text-[clamp(2.25rem,7vw,7rem)] leading-[0.95] text-balance">
-              Seven stages. <br />
-              <span className="italic gradient-text">One harvest.</span>
+              {t.journey.title1} <br />
+              <span className="italic gradient-text">{t.journey.titleAccent}</span>
             </h2>
           </div>
         </div>

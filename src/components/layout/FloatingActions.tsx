@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, MessageCircle } from "lucide-react";
 import { SITE } from "@/lib/constants";
+import { useT } from "@/lib/i18n/LanguageContext";
 
 export default function FloatingActions() {
   const [show, setShow] = useState(false);
+  const t = useT();
 
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 600);
@@ -26,10 +28,10 @@ export default function FloatingActions() {
           className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-3"
         >
           <a
-            href={`https://wa.me/${SITE.whatsapp.replace(/[^\d]/g, "")}?text=${encodeURIComponent(SITE.whatsappMsg)}`}
+            href={`https://wa.me/${SITE.whatsapp.replace(/[^\d]/g, "")}?text=${encodeURIComponent(t.site.whatsappMsg)}`}
             target="_blank"
             rel="noreferrer"
-            aria-label="WhatsApp us"
+            aria-label={t.common.whatsappUs}
             className="group relative grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-white shadow-lg shadow-[#25D366]/30 transition-transform hover:scale-110"
           >
             <span className="absolute inset-0 animate-ping rounded-full bg-[#25D366] opacity-30" />
@@ -37,7 +39,7 @@ export default function FloatingActions() {
           </a>
           <a
             href={`tel:${SITE.phoneRaw}`}
-            aria-label="Call us"
+            aria-label={t.common.call}
             className="grid h-14 w-14 place-items-center rounded-full bg-primary text-white shadow-lg shadow-primary/30 transition-transform hover:scale-110"
           >
             <Phone className="h-5 w-5" />

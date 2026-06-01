@@ -1,5 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif, Inter, JetBrains_Mono } from "next/font/google";
+import {
+  Instrument_Serif,
+  Inter,
+  JetBrains_Mono,
+  Tiro_Devanagari_Marathi,
+  Noto_Sans_Devanagari,
+} from "next/font/google";
 import { SITE } from "@/lib/constants";
 import "./globals.css";
 
@@ -8,18 +14,19 @@ import CustomCursor from "@/components/layout/CustomCursor";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FloatingActions from "@/components/layout/FloatingActions";
+import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 
 const display = Instrument_Serif({
   subsets: ["latin"],
   weight: ["400"],
-  variable: "--font-display",
+  variable: "--font-display-en",
   display: "swap",
 });
 
 const sans = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-sans",
+  variable: "--font-sans-en",
   display: "swap",
 });
 
@@ -27,6 +34,21 @@ const mono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
   variable: "--font-mono",
+  display: "swap",
+});
+
+const displayMr = Tiro_Devanagari_Marathi({
+  subsets: ["devanagari"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+  variable: "--font-display-mr",
+  display: "swap",
+});
+
+const sansMr = Noto_Sans_Devanagari({
+  subsets: ["devanagari"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-sans-mr",
   display: "swap",
 });
 
@@ -51,11 +73,14 @@ export const metadata: Metadata = {
     "Farmer Support Maharashtra",
     "Agriculture Solutions Maharashtra",
     "SHETSARTHI AGRO AGENCIES",
+    "शेतसारथी ॲग्रो",
+    "महाराष्ट्र शेती",
   ],
   authors: [{ name: SITE.fullName }],
   openGraph: {
     type: "website",
     locale: "en_IN",
+    alternateLocale: ["mr_IN"],
     url: SITE.url,
     siteName: SITE.name,
     title: `${SITE.name} — ${SITE.tagline}`,
@@ -94,6 +119,26 @@ const jsonLd = {
   priceRange: "$$",
 };
 
+// Inline script that runs before React hydration so the correct font kicks in
+// immediately and we avoid a flash of English on Marathi-preferring visitors.
+const localeBootstrap = `
+(function () {
+  try {
+    var key = 'shetsarthi-locale';
+    var stored = window.localStorage.getItem(key);
+    if (!stored) {
+      var m = document.cookie.match(/(?:^|; )shetsarthi-locale=([^;]*)/);
+      if (m) stored = decodeURIComponent(m[1]);
+    }
+    var locale = stored === 'mr' ? 'mr' : 'en';
+    var html = document.documentElement;
+    html.lang = locale;
+    html.classList.remove('lang-en', 'lang-mr');
+    html.classList.add('lang-' + locale);
+  } catch (e) {}
+})();
+`;
+
 export default function RootLayout({
   children,
 }: {
@@ -102,22 +147,25 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${sans.variable} ${mono.variable}`}
+      className={`lang-en ${display.variable} ${sans.variable} ${mono.variable} ${displayMr.variable} ${sansMr.variable}`}
     >
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <script dangerouslySetInnerHTML={{ __html: localeBootstrap }} />
       </head>
       <body className="grain bg-bg text-ink antialiased">
-        <SmoothScrollProvider>
-          <CustomCursor />
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-          <FloatingActions />
-        </SmoothScrollProvider>
+        <LanguageProvider>
+          <SmoothScrollProvider>
+            <CustomCursor />
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+            <FloatingActions />
+          </SmoothScrollProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

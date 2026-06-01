@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { Phone, Mail, MapPin, ArrowUpRight } from "lucide-react";
-import { NAV_LINKS, SITE } from "@/lib/constants";
+import { SITE } from "@/lib/constants";
+import { useT } from "@/lib/i18n/LanguageContext";
 
 export default function Footer() {
+  const t = useT();
   return (
     <footer className="relative overflow-hidden bg-forest text-white">
       <div className="absolute inset-0 opacity-30 mix-blend-overlay">
@@ -16,14 +18,11 @@ export default function Footer() {
         <div className="grid gap-12 sm:gap-16 sm:grid-cols-2 lg:grid-cols-12">
           <div className="sm:col-span-2 lg:col-span-6">
             <h3 className="font-display text-4xl sm:text-5xl md:text-7xl leading-[1] text-balance">
-              Let&apos;s grow
+              {t.footer.headingLine1}
               <br />
-              <span className="italic text-fresh">together.</span>
+              <span className="italic text-fresh">{t.footer.headingLine2}</span>
             </h3>
-            <p className="mt-6 max-w-md text-white/70">
-              From seed to mandi, our agronomists walk with you at every step.
-              Talk to a Maharashtra-based expert today.
-            </p>
+            <p className="mt-6 max-w-md text-white/70">{t.footer.lede}</p>
 
             <div className="mt-8 flex flex-wrap gap-3">
               <a
@@ -31,16 +30,18 @@ export default function Footer() {
                 className="group inline-flex items-center gap-3 rounded-full bg-white px-6 py-3 text-ink transition-colors hover:bg-fresh"
               >
                 <Phone className="h-4 w-4" />
-                <span className="font-medium">Call {SITE.phone}</span>
+                <span className="font-medium">
+                  {t.common.call} {SITE.phone}
+                </span>
                 <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </a>
               <a
-                href={`https://wa.me/${SITE.whatsapp.replace(/[^\d]/g, "")}?text=${encodeURIComponent(SITE.whatsappMsg)}`}
+                href={`https://wa.me/${SITE.whatsapp.replace(/[^\d]/g, "")}?text=${encodeURIComponent(t.site.whatsappMsg)}`}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3 transition-colors hover:bg-white hover:text-ink"
               >
-                WhatsApp
+                {t.common.whatsapp}
                 <ArrowUpRight className="h-4 w-4" />
               </a>
             </div>
@@ -48,10 +49,10 @@ export default function Footer() {
 
           <div className="lg:col-span-3">
             <p className="mb-3 sm:mb-4 text-xs uppercase tracking-[0.25em] text-fresh/80">
-              Sitemap
+              {t.footer.sitemap}
             </p>
             <ul className="space-y-2.5">
-              {NAV_LINKS.map((l) => (
+              {t.nav.map((l) => (
                 <li key={l.href}>
                   <Link
                     href={l.href}
@@ -67,7 +68,7 @@ export default function Footer() {
 
           <div className="lg:col-span-3">
             <p className="mb-4 text-xs uppercase tracking-[0.25em] text-fresh/80">
-              Reach Us
+              {t.footer.reachUs}
             </p>
             <ul className="space-y-3 text-sm text-white/80">
               <li className="flex items-start gap-3">
@@ -78,7 +79,7 @@ export default function Footer() {
                   rel="noreferrer"
                   className="transition-colors hover:text-white"
                 >
-                  {SITE.address}
+                  {t.site.address}
                 </a>
               </li>
               <li className="flex items-center gap-3">
@@ -107,13 +108,10 @@ export default function Footer() {
 
         <div className="mt-20 flex flex-col gap-4 border-t border-white/10 pt-8 md:flex-row md:items-center md:justify-between">
           <p className="text-xs text-white/50">
-            © {new Date().getFullYear()} {SITE.fullName}. All rights reserved.
+            © {new Date().getFullYear()} {t.site.fullName}. {t.footer.rights}
           </p>
-          <p className="text-xs text-white/50">
-            Crafted with cinematic care for Maharashtra&apos;s farmers.
-          </p>
+          <p className="text-xs text-white/50">{t.footer.crafted}</p>
         </div>
-
       </div>
     </footer>
   );

@@ -1,17 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, Phone } from "lucide-react";
-import { NAV_LINKS, SITE } from "@/lib/constants";
+import { SITE } from "@/lib/constants";
+import { useLanguage, useT } from "@/lib/i18n/LanguageContext";
+import LanguageToggle from "@/components/layout/LanguageToggle";
 import { cn } from "@/lib/utils";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const t = useT();
 
   const isHome = pathname === "/";
   // On any page other than home, always render the solid (scrolled) treatment.
@@ -63,15 +66,15 @@ export default function Navbar() {
               <span className="relative font-display text-xl leading-none">S</span>
             </span>
             <span className="flex flex-col leading-none">
-              <span className="font-display text-lg sm:text-xl text-ink">{SITE.name}</span>
+              <span className="font-display text-lg sm:text-xl text-ink">{t.site.name}</span>
               <span className="hidden xs:inline text-[10px] uppercase tracking-[0.2em] text-muted">
-                Maharashtra
+                {t.site.stateLabel}
               </span>
             </span>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1">
-            {NAV_LINKS.map((link) => {
+            {t.nav.map((link) => {
               const active =
                 link.href === "/"
                   ? pathname === "/"
@@ -99,9 +102,14 @@ export default function Navbar() {
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Language toggle only shows in the header on desktop. On
+                mobile/tablet it lives inside the hamburger menu drawer. */}
+            <div className="hidden lg:block">
+              <LanguageToggle solid={solid} />
+            </div>
             <a
               href={`tel:${SITE.phoneRaw}`}
-              aria-label="Call us"
+              aria-label={t.common.call}
               className="md:hidden grid h-10 w-10 place-items-center rounded-full bg-ink text-white"
             >
               <Phone className="h-4 w-4" />
@@ -111,12 +119,12 @@ export default function Navbar() {
               className="hidden md:inline-flex items-center gap-2 rounded-full bg-ink px-4 lg:px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-primary hover:scale-[1.03]"
             >
               <Phone className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">Talk to Expert</span>
+              <span className="hidden md:inline">{t.common.talkToExpert}</span>
             </a>
             <button
               onClick={() => setOpen(true)}
               className="lg:hidden grid h-10 w-10 sm:h-11 sm:w-11 place-items-center rounded-full border border-black/10 bg-white/60 backdrop-blur transition-colors hover:bg-white"
-              aria-label="Open menu"
+              aria-label={t.common.menu}
             >
               <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
@@ -132,41 +140,59 @@ export default function Navbar() {
 }
 
 function FullscreenMenu({ onClose }: { onClose: () => void }) {
+  const t = useT();
+  const { locale } = useLanguage();
+  const initialLocale = useRef(locale);
+
+  // Close the drawer whenever the user changes language from inside it,
+  // so they can immediately see the new copy on the page behind.
+  useEffect(() => {
+    if (locale !== initialLocale.current) {
+      onClose();
+    }
+  }, [locale, onClose]);
+
   return (
     <motion.div
-      initial={{ clipPath: "circle(0% at 100% 0%)" }}
-      animate={{ clipPath: "circle(150% at 100% 0%)" }}
-      exit={{ clipPath: "circle(0% at 100% 0%)" }}
-      transition={{ duration: 0.85, ease: [0.83, 0, 0.17, 1] }}
-      className="fixed inset-0 z-[80] bg-forest text-white"
+      initial={{ x: "100%" }}
+      animate={{ x: 0 }}
+      exit={{ x: "100%" }}
+      transition={{ duration: 0.42, ease: [0.83, 0, 0.17, 1] }}
+      className="fixed inset-0 z-[80] bg-forest text-white will-change-transform [transform:translateZ(0)] [backface-visibility:hidden]"
     >
-      <div className="absolute inset-0 opacity-30 mix-blend-overlay">
+      {/* Ambient glow — desktop only. Heavy 120/150px blurs cripple
+          mobile GPUs during the slide-in transition, so we drop them
+          where they hurt the most. */}
+      <div className="pointer-events-none absolute inset-0 hidden opacity-30 md:block">
         <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-fresh blur-[120px]" />
         <div className="absolute bottom-0 right-0 h-[600px] w-[600px] rounded-full bg-harvest/40 blur-[150px]" />
       </div>
 
       <div className="relative flex h-full flex-col">
         <div className="flex items-center justify-between p-6 md:p-10">
-          <span className="font-display text-2xl">{SITE.name}</span>
-          <button
-            onClick={onClose}
-            className="grid h-12 w-12 place-items-center rounded-full bg-white/10 backdrop-blur transition-colors hover:bg-white/20"
-            aria-label="Close menu"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          <span className="font-display text-2xl">{t.site.name}</span>
+          <div className="flex items-center gap-3">
+            <LanguageToggle variant="menu" />
+            <button
+              onClick={onClose}
+              className="grid h-12 w-12 place-items-center rounded-full bg-white/10 backdrop-blur transition-colors hover:bg-white/20"
+              aria-label={t.common.close}
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         <nav className="flex flex-1 flex-col justify-center overflow-y-auto px-6 md:px-20 py-6">
           <ul className="flex flex-col gap-1 md:gap-4">
-            {NAV_LINKS.map((link, i) => (
+            {t.nav.map((link, i) => (
               <motion.li
                 key={link.href}
-                initial={{ opacity: 0, y: 60 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
-                  delay: 0.35 + i * 0.06,
-                  duration: 0.7,
+                  delay: 0.18 + i * 0.04,
+                  duration: 0.4,
                   ease: [0.16, 1, 0.3, 1],
                 }}
               >
@@ -190,11 +216,11 @@ function FullscreenMenu({ onClose }: { onClose: () => void }) {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.9, duration: 0.6 }}
+          transition={{ delay: 0.5, duration: 0.35 }}
           className="flex flex-col gap-4 border-t border-white/10 p-6 md:flex-row md:items-center md:justify-between md:gap-2 md:p-10"
         >
           <div className="flex flex-col text-xs sm:text-sm text-white/60">
-            <span>{SITE.location}</span>
+            <span>{t.site.location}</span>
             {SITE.email ? <span>{SITE.email}</span> : null}
           </div>
           <div className="flex flex-wrap gap-2 sm:gap-3">
@@ -202,17 +228,17 @@ function FullscreenMenu({ onClose }: { onClose: () => void }) {
               href={`tel:${SITE.phoneRaw}`}
               className="rounded-full bg-white px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-medium text-ink transition-colors hover:bg-fresh"
             >
-              Call {SITE.phone}
+              {t.common.call} {SITE.phone}
             </a>
             <a
               href={`https://wa.me/${SITE.whatsapp.replace(/[^\d]/g, "")}?text=${encodeURIComponent(
-                SITE.whatsappMsg,
+                t.site.whatsappMsg,
               )}`}
               target="_blank"
               rel="noreferrer"
               className="rounded-full border border-white/30 px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-medium transition-colors hover:bg-white hover:text-ink"
             >
-              WhatsApp
+              {t.common.whatsapp}
             </a>
           </div>
         </motion.div>

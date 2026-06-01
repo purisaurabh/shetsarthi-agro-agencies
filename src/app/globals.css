@@ -11,6 +11,78 @@
   --fresh: #66bb6a;
   --earth: #6d4c41;
   --harvest: #f9a825;
+
+  /* Active font stack — overridden per locale below. */
+  --font-display: var(--font-display-en);
+  --font-sans: var(--font-sans-en);
+}
+
+html.lang-mr {
+  --font-display: var(--font-display-mr);
+  --font-sans: var(--font-sans-mr);
+}
+
+/*
+  Devanagari clipping fixes.
+
+  The Latin design uses very tight headline leading (leading-[0.9],
+  leading-[0.95]) which clips Marathi vowel marks (matras) like ी, े,
+  ै, ो, ौ that sit above the consonant. We force a comfortable
+  line-height on all display text in Marathi via !important so it
+  overrides Tailwind's arbitrary-value leading classes, then give the
+  per-letter slide-up reveal wrappers a touch of top padding so the
+  ascenders aren't cropped by overflow:hidden.
+*/
+html.lang-mr .font-display {
+  letter-spacing: 0;
+  line-height: 1.25 !important;
+}
+
+html.lang-mr body,
+html.lang-mr p {
+  line-height: 1.65;
+}
+
+/* Slide-up reveal wrappers — pad the top so the matras sit fully
+   inside the overflow:hidden box. */
+html.lang-mr .hero-line,
+html.lang-mr .cta-line > span,
+html.lang-mr .split-line {
+  padding-top: 0.18em;
+}
+
+/* Pure overflow-hidden text spans (used in PageHero) need the same
+   breathing room for the line top. */
+html.lang-mr h1 > span.block,
+html.lang-mr h2 > span.block,
+html.lang-mr h3 > span.block {
+  padding-top: 0.1em;
+}
+
+/* SplitText emits per-word wrappers (.inline-block + .overflow-hidden)
+   that crop matras the same way — pad them when inside any heading
+   or display-font ancestor. */
+html.lang-mr .font-display span.overflow-hidden,
+html.lang-mr h1 span.overflow-hidden,
+html.lang-mr h2 span.overflow-hidden,
+html.lang-mr h3 span.overflow-hidden {
+  padding-top: 0.12em;
+}
+
+/* Impact-style number counters use leading-none plus a card with
+   overflow-hidden — Devanagari numerals (५, ९, etc.) have tall top
+   curls that get clipped. Give them their own generous line-height
+   and let the inline box grow upward into the card padding. */
+html.lang-mr [data-counter],
+html.lang-mr [data-counter] + span {
+  line-height: 1.35 !important;
+  display: inline-block;
+  padding-top: 0.08em;
+}
+
+html.lang-mr .italic {
+  /* Tiro Devanagari Marathi ships with a true italic, so this works. */
+  font-style: italic;
 }
 
 * {

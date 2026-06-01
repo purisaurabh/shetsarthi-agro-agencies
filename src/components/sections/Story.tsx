@@ -4,7 +4,7 @@ import { useRef, useEffect } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { STORY_STAGES } from "@/lib/constants";
+import { useT } from "@/lib/i18n/LanguageContext";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -12,6 +12,8 @@ if (typeof window !== "undefined") {
 
 export default function Story() {
   const root = useRef<HTMLElement>(null);
+  const t = useT();
+  const STORY_STAGES = t.story.stages;
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -85,17 +87,18 @@ export default function Story() {
         <div className="mb-16 sm:mb-24 grid gap-6 sm:gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-2">
             <span className="inline-block rounded-full border border-black/10 bg-white/60 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-muted backdrop-blur">
-              Our Story
+              {t.story.eyebrow}
             </span>
           </div>
           <div className="lg:col-span-10">
             <h2 className="font-display text-[clamp(2rem,7vw,7rem)] leading-[1.05] sm:leading-[0.95] sm:text-balance">
-              From hand ploughs <br className="hidden sm:block" />
-              to <span className="italic gradient-text">data-driven</span> farms.
+              {t.story.title1} <br className="hidden sm:block" />
+              {t.story.title2}{" "}
+              <span className="italic gradient-text">{t.story.titleAccent}</span>{" "}
+              {t.story.title3}
             </h2>
             <p className="mt-5 sm:mt-8 max-w-xl text-base sm:text-lg text-muted">
-              Maharashtra&apos;s agriculture has evolved through centuries.
-              We&apos;re carrying it into the next one.
+              {t.story.lede}
             </p>
           </div>
         </div>
@@ -138,7 +141,7 @@ export default function Story() {
                       borderWidth: 1,
                     }}
                   >
-                    Chapter {String(i + 1).padStart(2, "0")}
+                    {t.common.chapter} {String(i + 1).padStart(2, "0")}
                   </span>
                 </div>
               </div>

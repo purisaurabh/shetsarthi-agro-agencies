@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { STATS } from "@/lib/constants";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -11,6 +11,9 @@ if (typeof window !== "undefined") {
 
 export default function Impact() {
   const root = useRef<HTMLElement>(null);
+  const { t, locale } = useLanguage();
+  const STATS = t.impact.stats;
+  const numberLocale = locale === "mr" ? "mr-IN" : "en-IN";
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -24,7 +27,7 @@ export default function Impact() {
           duration: 2.4,
           ease: "expo.out",
           onUpdate: () => {
-            el.textContent = Math.floor(obj.value).toLocaleString("en-IN");
+            el.textContent = Math.floor(obj.value).toLocaleString(numberLocale);
           },
           scrollTrigger: {
             trigger: el,
@@ -46,7 +49,7 @@ export default function Impact() {
       });
     }, root);
     return () => ctx.revert();
-  }, []);
+  }, [locale, numberLocale]);
 
   return (
     <section
@@ -68,8 +71,8 @@ export default function Impact() {
           </div>
           <div className="lg:col-span-10">
             <h2 className="font-display text-[clamp(2.25rem,7vw,7rem)] leading-[0.95] text-balance">
-              Numbers that <br className="hidden sm:block" />
-              <span className="italic gradient-text">mean something.</span>
+              {t.impact.title1} <br className="hidden sm:block" />
+              <span className="italic gradient-text">{t.impact.titleAccent}</span>
             </h2>
           </div>
         </div>
